@@ -1,7 +1,11 @@
 # This is the file where you must work. Write code in the functions, create new functions, 
 # so they work according to the specification
 
+import csv
+
 inventory = {'rope': 1, 'torch': 6, 'gold coin': 42, 'dagger': 1, 'arrow': 12} 
+added_items = ['gold coin', 'dagger', 'gold coin', 'gold coin', 'ruby']
+order = ""
 
 # Displays the inventory.
 def display_inventory(inventory):
@@ -12,16 +16,11 @@ def display_inventory(inventory):
 
 # Adds to the inventory dictionary a list of items from added_items.
 def add_to_inventory(inventory, added_items):
-    added_items = ['gold coin', 'dagger', 'gold coin', 'gold coin', 'ruby']
-    for key in inventory.keys():
-        if key in added_items:
-            inventory.values() 
-        
-
-    
-    dragon_loot = ['gold coin', 'dagger', 'gold coin', 'gold coin', 'ruby']
-    inv = add_to_inventory(inv, dragon_loot)
-    display_inventory(inv)
+    for item in added_items:
+        if item in inventory:
+            inventory[item]+= 1
+        else:
+            inventory[item] = 1
 
 
 # Takes your inventory and displays it in a well-organized table with 
@@ -32,7 +31,22 @@ def add_to_inventory(inventory, added_items):
 #   in descending order
 # - "count,asc" means the table is ordered by count in ascending order
 def print_table(inventory, order=None):
-    pass
+    max_len_name = max([len(v) for v in inventory.keys()])
+    max_len_count = max([len(str(v)) for v in inventory.values()])
+    sorted_inventory = inventory.items()
+    if order == "count,desc":
+        sorted_inventory = sorted(inventory.items(), key=lambda x: x[1], reverse=True)
+    if order == "count,asc":
+        sorted_inventory = sorted(inventory.items(), key=lambda x: x[1], reverse=False)
+    if order == "name,desc":
+        sorted_inventory = sorted(inventory.items(), key=lambda x: x[0], reverse=True)
+    if order == "name,asc":
+        sorted_inventory = sorted(inventory.items(), key=lambda x: x[0], reverse=False)
+    print("Inventory count:\tItem name")
+    for i in sorted_inventory:
+        pformat = "{:" + str(max_len_count) + "}\t{:>" + str(max_len_name) + "}";
+        print(pformat.format(i[1], i[0]))
+    print("Total number of items:", sum(inventory.values()))
 
 
 # Imports new inventory items from a file
@@ -40,7 +54,10 @@ def print_table(inventory, order=None):
 # "import_inventory.csv". The import automatically merges items by name.
 # The file format is plain text with comma separated values (CSV).
 def import_inventory(inventory, filename="import_inventory.csv"):
-    pass
+    with open('import_inventory.csv', 'w', newline='') as f:
+        reader = csv.reader(f)
+    for row in reader:
+        print(row)
 
 
 # Exports the inventory into a .csv file.
@@ -50,5 +67,3 @@ def import_inventory(inventory, filename="import_inventory.csv"):
 def export_inventory(inventory, filename="export_inventory.csv"):
     pass
 
-display_inventory(inventory)
-add_to_inventory(inventory, added_items)
